@@ -19,6 +19,12 @@ type MapTableToByteNet<T> =
 
 export const packets = defineNamespace("Packets", () => {
 	return {
+		// launches the vehicle
+		launchVehicle: definePacket({
+			value: ByteNet.nothing,
+			reliabilityType: "reliable"
+		}),
+
 		// place part
 		placePart: definePacket({
 			value: struct({

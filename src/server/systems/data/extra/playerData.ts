@@ -1,8 +1,9 @@
 import { createCollection, Document } from "@rbxts/lapis";
+import Object from "@rbxts/object-utils";
 import { Players, RunService } from "@rbxts/services";
 import defaultData, { DocumentData, PlayerData, playerDataValidation as validate } from "shared/data/defaultData";
 
-const DATA_STORE_NAME = RunService.IsStudio() ? "DevelopmentV44" : "Production";
+const DATA_STORE_NAME = RunService.IsStudio() ? "DevelopmentV51" : "Production";
 
 const collection = createCollection<PlayerData>(DATA_STORE_NAME, {
 	defaultData,
@@ -34,3 +35,4 @@ export async function loadPlayerData(player: Player) {
 		warn(`Failed to load player's document: ${player.Name} \n ${err}`);
 	}
 }
+

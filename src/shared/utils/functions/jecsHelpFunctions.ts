@@ -2,7 +2,7 @@ import { Entity, pair, Pair } from "@rbxts/jecs";
 import Object, { deepCopy } from "@rbxts/object-utils";
 import { RunService, Workspace } from "@rbxts/services";
 import { Tracer } from "@rbxts/tracer";
-import { DocumentData, PlayerData } from "shared/data/defaultData";
+import { decodeVehicleCFrame, DocumentData, PlayerData } from "shared/data/defaultData";
 import paths from "shared/paths";
 import * as c from "shared/utils/jecs/components";
 import {
@@ -10,6 +10,7 @@ import {
 	UpdateData,
 	UpdateInventory,
 	Cooldown,
+	Seat,
 	Own,
 	ClaimedBy,
 	Occupant,
@@ -25,6 +26,7 @@ import {
 	TargetReplication,
 } from "shared/utils/jecs/components";
 import { rayParamsFilter } from "./rayFunctions";
+import Vehicle from "shared/libs/vehicle";
 
 export type ComponentValue<C> = C extends Entity<infer T> ? T : C extends Pair<infer _, infer O> ? O : never;
 export type ComponentDataFromEntity<E> = E extends Entity<infer T> ? T : never;
@@ -44,10 +46,11 @@ export const MappedComponentsSwitched = Object.entries(MappedComponents)
 		{} as Record<string, string>,
 	) as ReturnType<<CompName extends AllComponentNames>() => { [K in MappedComponents[CompName]]: CompName }>;
 
-export const checkEntity = {}
+export const checkEntity = {};
 
 export const getEntity = {
-	replicatedFromServerEntity: (serverEntity: Entity) => world.query(pair(serverEntity, ReplicatedComponent)).iter()()[0],
+	replicatedFromServerEntity: (serverEntity: Entity) =>
+		world.query(pair(serverEntity, ReplicatedComponent)).iter()()[0],
 
 	fromInstance: (instance: Instance) => {
 		const entity = <Entity>instance.GetAttribute("ServerId");
@@ -57,10 +60,10 @@ export const getEntity = {
 	},
 
 	getPlot: (serverEntity: Entity) => world.query(pair(ClaimedBy, serverEntity)).iter()()[0],
+	getSnowPlow: (serverEntity: Entity) => world.query(pair(TargetEntity, serverEntity)).with(SnowPlow).iter()()[0]
 };
 
 export const setEntity = {
-
 	addTargetForReplication: (
 		targetEntity: Entity,
 		player: Player | Player[],
@@ -84,16 +87,17 @@ export const setEntity = {
 	},
 
 	claimPlot: (
-		playerClaimEntity: Entity, 
+		playerClaimEntity: Entity,
 		playerEntityModel: Model,
-		plotEntity: Entity, 
-		{ plot }: ComponentDataFromEntity<typeof Plot>) => {
-		playerEntityModel.PivotTo(plot.SpawnPoint.GetPivot().mul(CFrame.Angles(0, math.pi, 0)))
-		
-		addComponent(playerClaimEntity, Plot, { plot })
-		addComponent(playerClaimEntity, pair(TargetEntity, Plot), plotEntity)
-		addComponent(plotEntity, pair(ClaimedBy, playerClaimEntity), playerClaimEntity)
-	}
+		plotEntity: Entity,
+		{ plot }: ComponentDataFromEntity<typeof Plot>,
+	) => {
+		playerEntityModel.PivotTo(plot.SpawnPoint.GetPivot().mul(CFrame.Angles(0, math.pi, 0)));
+
+		addComponent(playerClaimEntity, Plot, { plot });
+		addComponent(playerClaimEntity, pair(TargetEntity, Plot), plotEntity);
+		addComponent(plotEntity, pair(ClaimedBy, playerClaimEntity), playerClaimEntity);
+	},
 };
 
 export const createEntity = {
@@ -109,30 +113,47 @@ export const createEntity = {
 	},
 
 	createSnowPlow: (
-		playerEntity: Entity, 
-		{ snowPlow }: ComponentDataFromEntity<typeof Data>, 
-		{ plot }: ComponentDataFromEntity<typeof Plot>
+		playerEntity: Entity,
+		{ snowPlow }: ComponentDataFromEntity<typeof Data>,
+		{ plot }: ComponentDataFromEntity<typeof Plot>,
 	) => {
-		const snowPlowModel = paths.Assets.SnowPlow[snowPlow.base].Clone()
-		const snowPlowEntity = world.entity()
+		const body = world.get(playerEntity, Body)
+		const snowPlowModel = paths.Assets.SnowPlow[snowPlow.base].Clone();
+		const snowPlowEntity = world.entity();
 
-		snowPlowModel.SetAttribute("ServerId", snowPlowEntity)
-		const origin = plot.Base.SnowPlowerSpawn.GetPivot()
-		snowPlowModel.PivotTo(new CFrame(origin.Position.add(new Vector3(0, snowPlowModel.GetExtentsSize().Y / 2, 0))))
-		snowPlowModel.Parent = Workspace
+		snowPlowModel.SetAttribute("ServerId", snowPlowEntity);
+		const origin = plot.Base.SnowPlowerSpawn.GetPivot();
+		snowPlowModel.PivotTo(new CFrame(origin.Position.add(
+			new Vector3(0, snowPlowModel.GetExtentsSize().Y / 2, 0)
+		)));
 
-		addComponent(playerEntity, pair(Occupant, SnowPlow), snowPlowEntity)
-		addComponent(snowPlowEntity, pair(TargetEntity, playerEntity), playerEntity)
+		// unload the components of the vehicle
+		const parts = snowPlow.parts
+		const physicalSeat = snowPlowModel.Seat
 
-		return snowPlowEntity
+		snowPlowModel.GetChildren().forEach((wheel) => {
+			if (wheel.Name.find("Wheel") && wheel.IsA("Model")) {
+				const wheelPart = wheel.PrimaryPart!
+				wheelPart.CustomPhysicalProperties = new PhysicalProperties(0.9, 1.1, 0.5, 1, 1)
+			}
+		})
+		
+		snowPlowModel.Parent = paths.Map.Placement;
+
+		addComponent(playerEntity, pair(Occupant, SnowPlow), snowPlowEntity);
+		if (physicalSeat) addComponent(snowPlowEntity, Seat, { seat: physicalSeat })
+		if (physicalSeat) addComponent(snowPlowEntity, SnowPlow, { snowPlowModel: snowPlowModel, vehicle: new Vehicle(playerEntity, physicalSeat, [snowPlowModel.FindFirstChild("Wheel_BR") as Model, snowPlowModel.FindFirstChild("Wheel_BL") as Model]) })
+		addComponent(snowPlowEntity, pair(TargetEntity, playerEntity), playerEntity);
+
+		return snowPlowEntity;
 	},
 
 	createPlot: (plot: Plot) => {
 		const plotEntity = world.entity();
 		plot.SetAttribute("ServerId", plotEntity);
 
-		addComponent(plotEntity, Plot, { plot })
-		addComponent(plotEntity, ModelDebugger, plot)
+		addComponent(plotEntity, Plot, { plot });
+		addComponent(plotEntity, ModelDebugger, plot);
 		return plotEntity;
 	},
 
@@ -142,12 +163,13 @@ export const createEntity = {
 		return updateEntity;
 	},
 
-	updateInventory: (updateFunction: (oldInventory: Inventory) => Inventory, bodyEntity: Entity, ) => {
-		const updateEntity = world.entity()
-		world.set(updateEntity, UpdateInventory, { bodyEntity, updateFunction })
-		return updateEntity
-	}
+	updateInventory: (updateFunction: (oldInventory: Inventory) => Inventory, bodyEntity: Entity) => {
+		const updateEntity = world.entity();
+		world.set(updateEntity, UpdateInventory, { bodyEntity, updateFunction });
+		return updateEntity;
+	},
 };
+
 
 export const jecsDefaultProps = {} satisfies {
 	[componentName in AllComponentNames]?: ComponentValue<MappedComponents[componentName]>;

@@ -3,6 +3,7 @@ import { Entity, Name, pair, World } from "@rbxts/jecs";
 import { Scheduler } from "@rbxts/planck";
 import { RunService } from "@rbxts/services";
 import { type PlayerData,  DocumentData } from "shared/data/defaultData";
+import Vehicle from "shared/libs/vehicle";
 
 export const debugEnabled = RunService.IsStudio()
 export const world = new World();
@@ -89,7 +90,9 @@ export const Body = component<{
 /************************ Snow Plow ************************/
 
 // snowplow component
-export const SnowPlow = component<{}>("SnowPlow")
+export const SnowPlow = component<{ snowPlowModel: SnowPlowModel, vehicle: Vehicle }>("SnowPlow")
+export const Seat = component<{ seat: VehicleSeat,  }>("Seat")
+export const Launching = component("Launching")
 
 // snowplow's fuel
 export const Fuel = component<{

@@ -28,6 +28,10 @@ export const playerDataValidation = t.interface({
 	snowPlow: snowPlowValidation,
 });
 
+export function decodeVehicleCFrame( vehiclePartCF: string) {
+	return new CFrame(...string.split(vehiclePartCF, ",").map(val => tonumber(val)!)! as [never, never, never, never, never, never, never])
+}
+
 export default defaultData;
 export type PlayerData = typeof defaultData;
 export type DocumentData = Document<PlayerData, true>;

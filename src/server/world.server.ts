@@ -11,6 +11,7 @@ import updatePlot from "./systems/plot/updatePlot";
 import updateSnowPlow from "./systems/snow-plow/updateSnowPlow";
 import updateFuel from "./systems/snow-plow/updateFuel";
 import snowPartsShop from "./systems/snow-plow/snowPartsShop";
+import launchSnowPlow from "./systems/snow-plow/launchSnowPlow";
 
 start([
     // player
@@ -28,6 +29,7 @@ start([
     { system: updateSnowPlow },
     { system: updateFuel },
     { system: snowPartsShop },
+    { system: launchSnowPlow },
 
     // component replication
     { system: replication },

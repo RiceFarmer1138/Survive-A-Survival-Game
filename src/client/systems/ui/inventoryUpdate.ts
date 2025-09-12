@@ -301,7 +301,7 @@ export default (world: World) => {
 
 			if (chosenCframe) {
 				chosenCframe =
-					fakeModel.Name.find("Block")[0] === undefined
+					fakeModel.Name.find("Block")[0] === undefined || fakeModel.Name.find("Wheel")[0] === undefined
 						? chosenCframe.mul(CFrame.Angles(0, math.rad(placementRotationY), 0))
 						: chosenCframe;
 				fakeModel.PivotTo(chosenCframe);

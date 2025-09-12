@@ -9,6 +9,7 @@ type AssetId = `rbxassetid://${number}` | `rbxgameasset://${string}`;
 
 type ValueFromReadonly<T> = T extends Readonly<infer U> ? U : never;
 
+type SnowPlowModel = Assets["SnowPlow"]["StarterSnowPlow"]
 type SnowPlowName = keyof Omit<Assets["SnowPlow"], keyof Folder | "Parts">;
 type Plot = GameMap["Plots"][keyof Omit<GameMap["Plots"], keyof Folder>]
 
