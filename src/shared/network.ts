@@ -19,50 +19,11 @@ type MapTableToByteNet<T> =
 
 export const packets = defineNamespace("Packets", () => {
 	return {
-		// launches the vehicle
-		launchVehicle: definePacket({
-			value: ByteNet.nothing,
-			reliabilityType: "reliable"
-		}),
 
-		// place part
-		placePart: definePacket({
-			value: struct({
-				vehiclePart: ByteNet.unknown as ByteNetType<InventoryItem>,
-				vehicleLocation: struct({
-					position: ByteNet.vec3,
-					orientation: ByteNet.unknown as ByteNetType<LuaTuple<[number, number, number]>>,
-					rotation: ByteNet.cframe
-				})
-			}),
-			reliabilityType: "reliable"
-		}),
-
-		// BUYING VEHICLE PARTS FROM THE SHOP
-		buyPart: definePacket({
-			value: ByteNet.unknown as ByteNetType<TowVehiclePart>,
-			reliabilityType: "reliable"
-		}),
-
-		refreshShop: definePacket({
-			value: ByteNet.nothing,
-			reliabilityType: 'reliable'
-		}),
 
 		updateInventory: definePacket({
 			value: ByteNet.unknown as ByteNetType<Inventory>,
 			reliabilityType: "reliable"
-		}),
-
-		// updating the parts restocked shop
-		updatePartsShop: definePacket({
-			value: ByteNet.unknown as ByteNetType<Array<TowVehiclePart>>,
-			reliabilityType: "reliable",
-		}),
-		
-		updateRestockTime: definePacket({
-			value: ByteNet.int32,
-			reliabilityType: "reliable",
 		}),
 
 		// for replicating to all players
@@ -93,26 +54,6 @@ export const packets = defineNamespace("Packets", () => {
 				}),
 				reliabilityType: "reliable",
 			}),
-			Fuel: definePacket({
-				value: struct({
-					serverEntity: ByteNet.unknown as ByteNetType<Entity>,
-					data: optional(struct({
-						regenerationRate: ByteNet.int8 as ByteNetType<number>,
-						current: ByteNet.int8 as ByteNetType<number>,
-						max: ByteNet.int8 as ByteNetType<number>
-					}))
-				}),
-				reliabilityType: "reliable"
-			}),
-			Plot: definePacket({
-				value: struct({
-					serverEntity: ByteNet.unknown as ByteNetType<Entity>,
-					data: optional(struct({
-						plot: ByteNet.inst as ByteNetType<Instance | Plot>
-					}))
-				}),
-				reliabilityType: "reliable"
-			})
 		} satisfies {
 			[k in keyof typeof componentsToReplicate]: packet<
 				struct<{

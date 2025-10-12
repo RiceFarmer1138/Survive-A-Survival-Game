@@ -2,7 +2,7 @@ import { Entity, pair, Pair } from "@rbxts/jecs";
 import Object, { deepCopy } from "@rbxts/object-utils";
 import { RunService, Workspace } from "@rbxts/services";
 import { Tracer } from "@rbxts/tracer";
-import { decodeVehicleCFrame, DocumentData, PlayerData } from "shared/data/defaultData";
+import { DocumentData, PlayerData } from "shared/data/defaultData";
 import paths from "shared/paths";
 import * as c from "shared/utils/jecs/components";
 import {
@@ -10,15 +10,9 @@ import {
 	UpdateData,
 	UpdateInventory,
 	Cooldown,
-	Seat,
-	Own,
-	ClaimedBy,
-	Occupant,
 	Body,
 	DestroyAfterCounting,
 	componentsToReplicate,
-	SnowPlow,
-	Plot,
 	Data,
 	ReplicatedComponent,
 	ModelDebugger,
@@ -26,7 +20,6 @@ import {
 	TargetReplication,
 } from "shared/utils/jecs/components";
 import { rayParamsFilter } from "./rayFunctions";
-import Vehicle from "shared/libs/vehicle";
 
 export type ComponentValue<C> = C extends Entity<infer T> ? T : C extends Pair<infer _, infer O> ? O : never;
 export type ComponentDataFromEntity<E> = E extends Entity<infer T> ? T : never;
@@ -59,8 +52,6 @@ export const getEntity = {
 		return entity !== undefined && world.contains(entity as Entity) ? entity : undefined;
 	},
 
-	getPlot: (serverEntity: Entity) => world.query(pair(ClaimedBy, serverEntity)).iter()()[0],
-	getSnowPlow: (serverEntity: Entity) => world.query(pair(TargetEntity, serverEntity)).with(SnowPlow).iter()()[0]
 };
 
 export const setEntity = {
@@ -85,19 +76,6 @@ export const setEntity = {
 		// sets tje targets in thje target replication
 		world.set(targetEntity, TargetReplication, { ...targetReplication, [component]: oldTargets });
 	},
-
-	claimPlot: (
-		playerClaimEntity: Entity,
-		playerEntityModel: Model,
-		plotEntity: Entity,
-		{ plot }: ComponentDataFromEntity<typeof Plot>,
-	) => {
-		playerEntityModel.PivotTo(plot.SpawnPoint.GetPivot().mul(CFrame.Angles(0, math.pi, 0)));
-
-		addComponent(playerClaimEntity, Plot, { plot });
-		addComponent(playerClaimEntity, pair(TargetEntity, Plot), plotEntity);
-		addComponent(plotEntity, pair(ClaimedBy, playerClaimEntity), playerClaimEntity);
-	},
 };
 
 export const createEntity = {
@@ -110,51 +88,6 @@ export const createEntity = {
 
 		// returns it
 		return replicatedEntity;
-	},
-
-	createSnowPlow: (
-		playerEntity: Entity,
-		{ snowPlow }: ComponentDataFromEntity<typeof Data>,
-		{ plot }: ComponentDataFromEntity<typeof Plot>,
-	) => {
-		const body = world.get(playerEntity, Body)
-		const snowPlowModel = paths.Assets.SnowPlow[snowPlow.base].Clone();
-		const snowPlowEntity = world.entity();
-
-		snowPlowModel.SetAttribute("ServerId", snowPlowEntity);
-		const origin = plot.Base.SnowPlowerSpawn.GetPivot();
-		snowPlowModel.PivotTo(new CFrame(origin.Position.add(
-			new Vector3(0, snowPlowModel.GetExtentsSize().Y / 2, 0)
-		)));
-
-		// unload the components of the vehicle
-		const parts = snowPlow.parts
-		const physicalSeat = snowPlowModel.Seat
-
-		snowPlowModel.GetChildren().forEach((wheel) => {
-			if (wheel.Name.find("Wheel") && wheel.IsA("Model")) {
-				const wheelPart = wheel.PrimaryPart!
-				wheelPart.CustomPhysicalProperties = new PhysicalProperties(0.9, 1.1, 0.5, 1, 1)
-			}
-		})
-		
-		snowPlowModel.Parent = paths.Map;
-
-		addComponent(playerEntity, pair(Occupant, SnowPlow), snowPlowEntity);
-		if (physicalSeat) addComponent(snowPlowEntity, Seat, { seat: physicalSeat })
-		if (physicalSeat) addComponent(snowPlowEntity, SnowPlow, { snowPlowModel: snowPlowModel, vehicle: new Vehicle(playerEntity, physicalSeat, [snowPlowModel.FindFirstChild("Wheel_BR") as Model, snowPlowModel.FindFirstChild("Wheel_BL") as Model]) })
-		addComponent(snowPlowEntity, pair(TargetEntity, playerEntity), playerEntity);
-
-		return snowPlowEntity;
-	},
-
-	createPlot: (plot: Plot) => {
-		const plotEntity = world.entity();
-		plot.SetAttribute("ServerId", plotEntity);
-
-		addComponent(plotEntity, Plot, { plot });
-		addComponent(plotEntity, ModelDebugger, plot);
-		return plotEntity;
 	},
 
 	updateData: (updateFunction: (oldData: PlayerData) => PlayerData, bodyEntity: Entity) => {

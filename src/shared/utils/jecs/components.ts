@@ -3,7 +3,6 @@ import { Entity, Name, pair, World } from "@rbxts/jecs";
 import { Scheduler } from "@rbxts/planck";
 import { RunService } from "@rbxts/services";
 import { type PlayerData,  DocumentData } from "shared/data/defaultData";
-import Vehicle from "shared/libs/vehicle";
 
 export const debugEnabled = RunService.IsStudio()
 export const world = new World();
@@ -87,25 +86,4 @@ export const Body = component<{
 	rootAttachment: Attachment;
 }>("Body");
 
-/************************ Snow Plow ************************/
-
-// snowplow component
-export const SnowPlow = component<{ snowPlowModel: SnowPlowModel, vehicle: Vehicle }>("SnowPlow")
-export const Seat = component<{ seat: VehicleSeat,  }>("Seat")
-export const Launching = component("Launching")
-
-// snowplow's fuel
-export const Fuel = component<{
-	regenerationRate: number,
-	current: number;
-	max: number
-}>("Fuel");
-export const FuelRanOut = component("FuelRanOut")
-
-/************************ Plot ************************/
-export const Plot = component<{ plot: Plot }>("Plot")
-export const ClaimedBy = component<Entity>("ClaimedBy")
-export const Own = component<Entity>("Own")
-export const Occupant = component<Entity>("Occupant")
-
-export const componentsToReplicate = { Body, Fuel, Plot };
+export const componentsToReplicate = { Body };
