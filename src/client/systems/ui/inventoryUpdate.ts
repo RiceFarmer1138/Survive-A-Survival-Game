@@ -33,7 +33,7 @@ const mouse = LocalPlayer.GetMouse();
 export const placeSignal = new Signal();
 const trash = new Janitor();
 let placementRotationY: number = 0;
-let fakeModel: Model | undefined;
+let fakeModel: BasePart | undefined;
 let highlight: Highlight | undefined;
 let goalCFrame: CFrame | undefined;
 
@@ -214,7 +214,7 @@ export default (world: World) => {
 			plotComp.plot &&
 			fakeModel &&
 			hotbarSelected &&
-			!areItemsOverlapping(paths.Map.Placement.GetChildren() as TowVehiclePartModel[], fakeModel, goalCFrame)
+			!areItemsOverlapping(paths.Map.Placement.GetChildren() as TowVehiclePartModel[], fakeModel, goalCFrame, fakeModel.Size.div(2))
 		) {
 			const orientation = goalCFrame.ToOrientation();
 			const rotation = CFrame.Angles(0, math.rad(placementRotationY), 0);
@@ -239,7 +239,7 @@ export default (world: World) => {
 		const hitObj = hitResult.hit?.IsDescendantOf(plotComp.plot) ? plotFloor : hitResult.hit;
 		const hitSize = hitObj && hitObj.Size;
 		const hitCF = hitObj && hitObj.CFrame;
-		const fullSize = fakeModel.GetExtentsSize();
+		const fullSize = fakeModel.Size
 		const halfSize = fullSize.div(2);
 
 		if (hitObj && hitSize && hitCF) {
@@ -255,6 +255,7 @@ export default (world: World) => {
 			);
 			const modelPivot = fakeModel.GetPivot();
 			const normal = hitResult.normal;
+			const isWheel = fakeModel.Name.find("Wheel")[0] === undefined
 			let slideCF: CFrame | undefined;
 			let targetY: number | undefined;
 			let chosenCframe: CFrame | undefined;
@@ -270,12 +271,12 @@ export default (world: World) => {
 						: 1,
 				);
 				const finalY = slideCF ? slideCF.Position.Y : targetY!;
-				chosenCframe = slideCF ? slideCF : new CFrame(snappedXZ.X, finalY, snappedXZ.Z);
+				chosenCframe = slideCF ? slideCF : new CFrame(snappedXZ.X, finalY + halfSize.Y, snappedXZ.Z);
 
 				// side placement
 			} else if (normal.Y === 0) {
-				const finalCF = (hitObj.Parent as Model).GetPivot().add(normal.mul(fullSize));
-				const snappedCF = getSnappedGridCFrame(plotFloor.CFrame, finalCF, 1);
+				const finalCF = (hitObj as BasePart).Position.add(normal.mul(fullSize));
+				const snappedCF = getSnappedGridCFrame(plotFloor.CFrame, new CFrame(finalCF), 1);
 				const rotationCFrame = CFrame.lookAlong(Vector3.zero, normal.mul(-1), Vector3.yAxis);
 				chosenCframe = new CFrame(snappedCF.X, finalCF.Y, snappedCF.Z);
 				chosenCframe = clampCFrameToBounds(
@@ -296,7 +297,7 @@ export default (world: World) => {
 						: 1,
 				);
 				const finalY = slideCF ? slideCF.Position.Y : targetY!;
-				chosenCframe = slideCF ? slideCF : new CFrame(snappedXZ.X, finalY, snappedXZ.Z);
+				chosenCframe = slideCF ? slideCF : new CFrame(snappedXZ.X, finalY + halfSize.Y, snappedXZ.Z);
 			}
 
 			if (chosenCframe) {
@@ -312,6 +313,7 @@ export default (world: World) => {
 						paths.Map.Placement.GetChildren() as TowVehiclePartModel[],
 						fakeModel,
 						chosenCframe,
+						halfSize
 					)
 						? false
 						: true,
@@ -352,7 +354,7 @@ export default (world: World) => {
 			plotComp.plot &&
 			fakeModel &&
 			hotbarSelected &&
-			!areItemsOverlapping(paths.Map.Placement.GetChildren() as TowVehiclePartModel[], fakeModel, goalCFrame)) {
+			!areItemsOverlapping(paths.Map.Placement.GetChildren() as TowVehiclePartModel[], fakeModel, goalCFrame, fakeModel.Size.div(2))) {
 				const orientation = goalCFrame.ToOrientation();
 			const rotation = CFrame.Angles(0, math.rad(placementRotationY), 0);
 			routes.placePart.send({

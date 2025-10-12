@@ -138,7 +138,7 @@ export const createEntity = {
 			}
 		})
 		
-		snowPlowModel.Parent = paths.Map.Placement;
+		snowPlowModel.Parent = paths.Map;
 
 		addComponent(playerEntity, pair(Occupant, SnowPlow), snowPlowEntity);
 		if (physicalSeat) addComponent(snowPlowEntity, Seat, { seat: physicalSeat })

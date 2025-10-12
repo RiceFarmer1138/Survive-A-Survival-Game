@@ -118,7 +118,6 @@ export default (world: World) => {
 				if (alreadyExistItem) {
 					alreadyExistItem.Amount--;
 					const partModel = paths.Assets.SnowPlow.Parts[ItemName].Clone();
-					const partHitbox = partModel.FindFirstChild("HitBox") as Model;
 					partModel.PivotTo(
 						new CFrame(vehicleLocation.position).mul(
 							CFrame.Angles(
@@ -132,14 +131,12 @@ export default (world: World) => {
 					partModel.GetDescendants().forEach((descendant) => {
 						if (descendant.IsA("BasePart")) descendant.CanCollide = true;
 					});
-					partHitbox.Destroy();
-					if (partHitbox)
-						if (alreadyExistItem.Amount <= 0) {
-							// if the item has 0 counts after deducting, we just remove the item completely
-							const indexToRemove = inventory.findIndex((item) => item.ItemName === ItemName);
-							inventory.remove(indexToRemove);
-							return inventory;
-						}
+					if (alreadyExistItem.Amount <= 0) {
+						// if the item has 0 counts after deducting, we just remove the item completely
+						const indexToRemove = inventory.findIndex((item) => item.ItemName === ItemName);
+						inventory.remove(indexToRemove);
+						return inventory;
+					}
 				}
 				return inventory;
 			}, entity);

@@ -1,23 +1,23 @@
 type Assets = Folder & {
 	SnowPlow: Folder & {
 		Parts: Folder & {
-			["All-Terrain Wheels"]: Model & {};
-			["Black Hole Engine"]: Model & {};
-			["Fuel Canister"]: Model & {};
-			["Heavy Duty Wheels"]: Model & {};
-			["Large Fuel Tank"]: Model & {};
-			["Mega Fuel Tank"]: Model & {};
-			["Mini Plow Blade"]: Model & {};
-			["Rocket Booster"]: Model & {};
-			["Seat"]: Model & {};
-			["Small Fuel Tank"]: Model & {};
-			["Snow Shredder"]: Model & {};
-			["Standard Wheel"]: Model & {};
-			["Steel Block"]: Model & {};
-			["Strong Snow Shredder"]: Model & {};
-			["Super Engine"]: Model & {};
-			["Wide Plow Blade"]: Model & {};
-			["WoodenBlock"]: Model & {};
+			["All-Terrain Wheels"]: BasePart & {};
+			["Black Hole Engine"]: BasePart & {};
+			["Fuel Canister"]: BasePart & {};
+			["Heavy Duty Wheels"]: BasePart & {};
+			["Large Fuel Tank"]: BasePart & {};
+			["Mega Fuel Tank"]: BasePart & {};
+			["Mini Plow Blade"]: BasePart & {};
+			["Rocket Booster"]: BasePart & {};
+			["Seat"]: BasePart & {};
+			["Small Fuel Tank"]: BasePart & {};
+			["Snow Shredder"]: BasePart & {};
+			["Standard Wheel"]: BasePart & {};
+			["Steel Block"]: BasePart & {};
+			["Strong Snow Shredder"]: BasePart & {};
+			["Super Engine"]: BasePart & {};
+			["Wide Plow Blade"]: BasePart & {};
+			["WoodenBlock"]: BasePart & {};
 		};
 		StarterSnowPlow: Model & {
 			Seat: VehicleSeat
