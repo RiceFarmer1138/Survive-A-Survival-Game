@@ -17,4 +17,4 @@ export default (world: World) => {
 			task.spawn(() => loadPlayerData(player));
 		}
 	});
-};
+}
