@@ -19,7 +19,7 @@ function replicateAllToPlayer(world: World, player: Player) {
 	}
 }
 
-export default (world: World) => {
+export default function replication(world: World) {
 	useRoute("getReplicatedComponents", (_: void, player) => replicateAllToPlayer(world, player!));
 	for (const [player] of useEvent(Players.PlayerAdded)) replicateAllToPlayer(world, player);
 

@@ -18,7 +18,7 @@ const playersWithoutData = world.query(Body).with(Player).without(Data).cached()
  * `updateData`
  * A system for updating data-related structures
  */
-export default (world: World) => {
+export default function updatePlayerData(world: World) {
 	for (const [updateEntity, update] of world.query(UpdateData)) {
 		const bodyEntity = update.bodyEntity;
 		const hasEntity = world.contains(bodyEntity);

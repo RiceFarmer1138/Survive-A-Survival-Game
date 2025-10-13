@@ -5,7 +5,7 @@ import { getCharacterParts } from "shared/utils/functions/characterFunctions";
 import { addComponent } from "shared/utils/functions/jecsHelpFunctions";
 import { Body, ModelDebugger, Player } from "shared/utils/jecs/components";
 
-export default (world: World) => {
+export default function updateBody(world: World) {
 	const playerModels = paths.Characters.Players.GetChildren() as Array<Model>;
 	playerModels.forEach((model) => {
 		const player = Players.GetPlayerFromCharacter(model);

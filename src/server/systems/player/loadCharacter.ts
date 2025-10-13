@@ -3,7 +3,7 @@ import { Players } from "@rbxts/services";
 import paths from "shared/paths";
 
 // loads the character
-export default (world: World) => {
+export default function loadCharacter(world: World) {
 	Players.GetPlayers().forEach((player) => {
 		if (!player.GetAttribute("characterSpawnedTag")) {
 			player.SetAttribute("characterSpawnedTag", true);

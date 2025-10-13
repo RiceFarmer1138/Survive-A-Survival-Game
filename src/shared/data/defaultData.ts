@@ -8,7 +8,6 @@ const defaultData = {
 };
 
 export const playerDataValidation = t.interface({
-	Coins: t.number,
 	inventoryData: t.array(
     t.interface({
       IsStackable: t.boolean,

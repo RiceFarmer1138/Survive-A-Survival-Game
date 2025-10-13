@@ -5,7 +5,7 @@ import { componentsToReplicate } from "shared/utils/jecs/components";
 import { useMemo } from "shared/utils/jecs/plugins/hooks/use-memo";
 import { useRoute } from "shared/utils/jecs/plugins/hooks/use-route";
 
-export default (world: World) => {
+export default function receiveReplication(world: World) {
 	useRoute("deleteReplicatedEntity", (serverEntity: Entity) => {
 		const clientEntity = getEntity.replicatedFromServerEntity(serverEntity);
 

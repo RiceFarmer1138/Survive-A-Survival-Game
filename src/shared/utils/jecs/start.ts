@@ -6,6 +6,7 @@ import PlankJabbyPlugin from "@rbxts/planck-jabby";
 import { hotReloader, ModelDebugger, systemQueue, world } from "./components";
 import { routes } from "shared/network";
 import { PlanckHooksPlugin } from "./plugins";
+import { setupLogger } from "./setupLogger";
 
 const IS_SERVER_CONTEXT = RunService.IsServer();
 
@@ -133,6 +134,7 @@ export function start(systems: Array<SystemTable<[World]>>) {
 
 	systemQueue.addPlugin(new PlankJabbyPlugin()).addPlugin(new PlanckHooksPlugin());
 	hotReload(systems);
+	setupLogger()
 
 	if (IS_SERVER_CONTEXT) {
 		jabby.broadcast_server();

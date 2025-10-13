@@ -8,7 +8,7 @@ import { getEntity } from "shared/utils/functions/jecsHelpFunctions";
  * `savePlayerData`
  * A system for saving player data
  */
-export default (world: World) => {
+export default function savePlayerData(world: World) {
 	for (const [player] of useEvent(Players.PlayerRemoving)) {
 		const playerData = getPlayerData(player);
 		const entity = getEntity.fromInstance(player);
