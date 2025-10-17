@@ -97,7 +97,7 @@ export const createEntity = {
 	},
 
 	updateInventory: (updateFunction: (oldInventory: Inventory) => Inventory, bodyEntity: Entity) => {
-		const updateEntity = world.entity();
+		const updateEntity = world.entity()
 		world.set(updateEntity, UpdateInventory, { bodyEntity, updateFunction });
 		return updateEntity;
 	},

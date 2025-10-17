@@ -2,13 +2,8 @@ import { createCollection, Document } from "@rbxts/lapis";
 import Object from "@rbxts/object-utils";
 import { Players, RunService } from "@rbxts/services";
 import defaultData, { DocumentData, PlayerData, playerDataValidation as validate } from "shared/data/defaultData";
+import { collection } from "./collection";
 
-const DATA_STORE_NAME = RunService.IsStudio() ? "DevelopmentStudio" : "Production";
-
-const collection = createCollection<PlayerData>(DATA_STORE_NAME, {
-	defaultData,
-	validate,
-});
 const playerData = new Map<Player, DocumentData>();
 
 export function setPlayerData(player: Player, data: DocumentData) {

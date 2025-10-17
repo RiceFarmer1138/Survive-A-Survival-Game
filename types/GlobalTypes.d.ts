@@ -7,17 +7,20 @@ type ValueOf<T> = T[keyof T];
 
 type AssetId = `rbxassetid://${number}` | `rbxgameasset://${string}`;
 
-type ValueFromReadonly<T> = T extends Readonly<infer U> ? U : never;
-
-type SnowPlowModel = Assets["SnowPlow"]["StarterSnowPlow"]
-type SnowPlowName = keyof Omit<Assets["SnowPlow"], keyof Folder | "Parts">;
-type Plot = GameMap["Plots"][keyof Omit<GameMap["Plots"], keyof Folder>]
+type ValueFromReadonly<T> = T extends Readonly<infer U> ? U : never
 
 type GameUI = Assets["UI"]["GameUI"]
+type Ore = keyof Omit<Assets["Ores"], keyof Folder>
 
 type Inventory = Array<InventoryItem>
 type InventoryItem = { 
   IsStackable: boolean;
   Amount: number;
   Slot: number; 
+}
+
+declare enum ToolType {
+  Hammer = "Hammer",
+  Axe = "Axe",
+  Pickaxe = "Pickaxe",
 }

@@ -17,8 +17,8 @@ export default function loadData(world: World) {
 
 			task.spawn(() => loadPlayerData(player).then((data) => 
 				Log.Info(
-					`Succcessfully loaded pdata for ${player.GetFullName()}
-					\n Inventory: ${data && data.read().inventoryData.join(", ")}`
+					`	Succcessfully loaded pdata for ${player.GetFullName()}
+						\n Inventory: ${data && data.read().inventoryData.join(", ")}`
 				)
 			));
 		}

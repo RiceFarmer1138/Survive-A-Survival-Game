@@ -2,12 +2,27 @@
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"files.eol": "\n",
 	"[typescript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.defaultFormatter": "vscode.typescript-language-features",
 		"editor.formatOnSave": true
 	},
 	"[typescriptreact]": {
-		"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+		"editor.defaultFormatter": "vscode.typescript-language-features",
 		"editor.formatOnSave": true
+	},
+	"files.exclude": {
+		"**.vscode": true,
+		"**LICENSE": true,
+		"**.gitignore": true,
+		"**.gitattributes": true,
+		"**.prettierrc": true,
+		"**.eslintrc": true,
+		"**tsconfig.json": true,
+		"**default.project.json": true,
+		"**package-lock.json": true,
+		"**package.json": true,
+		"**README.md": true,
+		"**include": true,
+		"**node_modules": true,
 	},
 	"eslint.run": "onType",
 	"eslint.format.enable": true

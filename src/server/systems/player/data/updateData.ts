@@ -53,17 +53,13 @@ export default function updatePlayerData(world: World) {
 			const oldInventory = oldData.inventoryData
 			const updatedInventory = updateFunction(deepCopy(oldInventory))
 
-			const mergedInventory = updatedInventory.size() < oldInventory.size() ? updatedInventory :  Sift.Dictionary.mergeDeep(oldInventory, updatedInventory);
+			const mergedInventory = updatedInventory.size() < oldInventory.size()
+				? updatedInventory
+				: Sift.Dictionary.mergeDeep(oldInventory, updatedInventory);
 			const finalData = { ...oldData, inventoryData: mergedInventory }
-			world.set(bodyEntity, Data, finalData);
-			if (player) {
-				const playerDocument = getPlayerData(player);
-				if (playerDocument) {
-					routes.updateInventory.sendTo(mergedInventory, player)
-					setPlayerData(player, playerDocument);
-					playerDocument.write(finalData as unknown as PlayerData);
-				}
-			}
+
+			// if the new data is different from old, we will update with the latest updated data
+			if (!Sift.Dictionary.equalsDeep(oldData, finalData)) createEntity.updateData(() => finalData, bodyEntity)
 		}
 	}
 

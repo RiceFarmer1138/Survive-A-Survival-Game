@@ -2,12 +2,14 @@ import { HotReloader } from "@rbxts/hot-reloader";
 import { Entity, Name, pair, World } from "@rbxts/jecs";
 import { Scheduler } from "@rbxts/planck";
 import { RunService } from "@rbxts/services";
+import Builder from "shared/builders";
 import { type PlayerData,  DocumentData } from "shared/data/defaultData";
 
 export const debugEnabled = RunService.IsStudio()
 export const world = new World();
-export const systemQueue = new Scheduler(world);
+export const worldBuilder = new Builder(world)
 export const hotReloader = new HotReloader();
+export const systemQueue = new Scheduler(world);
 world.set(Name, Name, "Name");
 const component = <T = undefined>(name: string, defaultValue?: T) => {
 	const theComponent = world.component<T>();
@@ -56,12 +58,28 @@ export const Removed = <T>(comp: Entity<T>) => {
 
 /************************ Player ************************/
 
+// hunger for player
+export const HungerBar = component<{
+	hunger: number;
+	maxHunger: number
+	/**
+	 * how long it takes to deduct player's hunger
+	 * could be affected by different mutations like poison
+	 * or roles (baker, medic, etc)
+	 */
+	hungerRate: number;
+}>("HungerBar");
+// fflag for when the player runs out of hunger
+export const Starved = component("Starved")
+
 // player inventory
 export const UpdateInventory = component<{
+	// the function that returns the updated player inventory
 	updateFunction: (oldInventory: Inventory) => Inventory;
 	bodyEntity: Entity;
-}>("UpdateData");
-// export const Inventory = component<{ inventory: Inventory }>("Inventory")
+}>("UpdateInventory");
+
+export const Inventory = component<Inventory>("Inventory");
 
 // player data comp
 export const Data = component<PlayerData>("Data");
@@ -86,4 +104,19 @@ export const Body = component<{
 	rootAttachment: Attachment;
 }>("Body");
 
+/************************ Gameplay ************************/
+
+// how far the players have made it to the days
+export const Day = component<{
+	// days indicator
+	day: number;
+	indicator: "AM" | "PM";
+}>("Day");
+
+// ore component
+export const Ore = component<{
+	ore: Ore
+}>("Ore	")
+
+// components to replicate to the client
 export const componentsToReplicate = { Body };
