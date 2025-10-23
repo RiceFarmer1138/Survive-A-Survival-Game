@@ -1,8 +1,9 @@
-import { Atom, atom } from "@rbxts/charm";
+import type { Atom } from "@rbxts/charm";
+import { atom } from "@rbxts/charm";
 
 const pageStates = {
-    openPage: atom("None") as Atom<"Shop" | "None">,
-    inventoryItems: atom(new Array<InventoryItem>()),
-}
+	inventoryItems: atom(new Array<InventoryItem>()),
+	openPage: atom("None") as Atom<"None" | "Shop">,
+};
 
 export default pageStates;

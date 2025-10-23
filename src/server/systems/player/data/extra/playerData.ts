@@ -1,7 +1,7 @@
-import { createCollection, Document } from "@rbxts/lapis";
-import Object from "@rbxts/object-utils";
-import { Players, RunService } from "@rbxts/services";
-import defaultData, { DocumentData, PlayerData, playerDataValidation as validate } from "shared/data/defaultData";
+import { Players } from "@rbxts/services";
+
+import type { DocumentData } from "shared/data/defaultData";
+
 import { collection } from "./collection";
 
 const playerData = new Map<Player, DocumentData>();
@@ -24,10 +24,9 @@ export async function loadPlayerData(player: Player) {
 
 		setPlayerData(player, document);
 
-		Promise.fromEvent(Players.PlayerRemoving, (left) => left === player).then(() => document.close());
+		Promise.fromEvent(Players.PlayerRemoving, (left) => left === player).then(async () => document.close());
 		return document;
 	} catch (err) {
 		warn(`Failed to load player's document: ${player.Name} \n ${err}`);
 	}
 }
-

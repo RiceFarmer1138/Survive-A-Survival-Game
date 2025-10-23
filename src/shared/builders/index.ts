@@ -1,24 +1,25 @@
-import { World } from "@rbxts/jecs";
-import OreBuilder from "./environment/ores/oreBuilder";
+import type { World } from "@rbxts/jecs";
+
+import OreBuilder from "./ores/ore-builder";
 
 export default class Builder {
-    private world: World
+	private readonly world: World;
 
-    public constructor(world: World) {
-        this.world = world;
-    }
+	constructor(world: World) {
+		this.world = world;
+	}
 
-    /**
-     * Create an item with specified (stacks, name, itemType, etc.)
-     * 
-     * @public
-     * @memberof systemBuilder
-     */
-    public NewOre() {
-        return new OreBuilder(this.world)
-    }
+	/**
+	 * Create an item with specified (stacks, name, itemType, etc.).
+	 *
+	 * @memberof systemBuilder
+	 * @public
+	 */
+	public Ore(): OreBuilder {
+		return new OreBuilder(this.world);
+	}
 
-    public GetMaxOres() {
-        return 30
-    }
+	public GetMaxOres(): number {
+		return 30;
+	}
 }

@@ -1,11 +1,12 @@
 import { equals } from "@rbxts/phantom/src/Array";
+
 import { useHookState } from "../topo";
 
 interface storage {
-	dependencies?: readonly unknown[];
+	dependencies?: ReadonlyArray<unknown>;
 }
 
-export function useChange(dependencies: readonly unknown[], discriminator?: unknown): boolean {
+export function useChange(dependencies: ReadonlyArray<unknown>, discriminator?: unknown): boolean {
 	const storage = useHookState<storage>(discriminator);
 	const previous = storage.dependencies;
 	storage.dependencies = dependencies;

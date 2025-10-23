@@ -1,19 +1,19 @@
 {
 	"name": "roblox-ts-game",
-	"globIgnorePaths": [
-		"**/package.json",
-		"**/tsconfig.json"
-	],
+	"globIgnorePaths": ["**/package.json", "**/tsconfig.json"],
 	"tree": {
 		"$className": "DataModel",
-		"ServerScriptService": {
-			"$className": "ServerScriptService",
-			"TS": {
-				"$path": "out/server"
+		"HttpService": {
+			"$className": "HttpService",
+			"$properties": {
+				"HttpEnabled": true
 			}
 		},
 		"ReplicatedStorage": {
 			"$className": "ReplicatedStorage",
+			"TS": {
+				"$path": "out/shared"
+			},
 			"rbxts_include": {
 				"$path": "include",
 				"node_modules": {
@@ -22,9 +22,18 @@
 						"$path": "node_modules/@rbxts"
 					}
 				}
-			},
+			}
+		},
+		"ServerScriptService": {
+			"$className": "ServerScriptService",
 			"TS": {
-				"$path": "out/shared"
+				"$path": "out/server"
+			}
+		},
+		"SoundService": {
+			"$className": "SoundService",
+			"$properties": {
+				"RespectFilteringEnabled": true
 			}
 		},
 		"StarterPlayer": {
@@ -40,18 +49,6 @@
 			"$className": "Workspace",
 			"$properties": {
 				"FilteringEnabled": true
-			}
-		},
-		"HttpService": {
-			"$className": "HttpService",
-			"$properties": {
-				"HttpEnabled": true
-			}
-		},
-		"SoundService": {
-			"$className": "SoundService",
-			"$properties": {
-				"RespectFilteringEnabled": true
 			}
 		}
 	}

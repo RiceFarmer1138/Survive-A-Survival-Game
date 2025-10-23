@@ -1,17 +1,20 @@
-import { start } from "shared/utils/jecs/start";
-import receiveReplication from "./systems/receive-replication";
 import { Players } from "@rbxts/services";
+
 import paths from "shared/paths";
-import gameUI from "./app/gameUI";
+import { start } from "shared/utils/jecs/start";
 import pagePaths from "shared/utils/ui/ui-paths";
 
-if (!game.IsLoaded()) game.Loaded.Wait()
-const playerGui = Players.LocalPlayer.WaitForChild("PlayerGui") as PlayerGui
-const shopUI = paths.Assets.UI.GameUI.Clone() as GameUI
+import gameUI from "./app/gameUI";
+import receiveReplication from "./systems/receive-replication";
 
-shopUI.Parent = playerGui
-gameUI(pagePaths(shopUI))
+if (!game.IsLoaded()) {
+	game.Loaded.Wait();
+}
 
-start([
-    { system: receiveReplication }
-])
+const playerGui = Players.LocalPlayer.WaitForChild("PlayerGui") as PlayerGui;
+const shopUI = paths.Assets.UI.GameUI.Clone();
+
+shopUI.Parent = playerGui;
+gameUI(pagePaths(shopUI));
+
+start([{ system: receiveReplication }]);

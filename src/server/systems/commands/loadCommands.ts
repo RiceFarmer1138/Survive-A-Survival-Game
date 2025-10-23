@@ -1,5 +1,7 @@
-import { World } from "@rbxts/jecs";
+import type { World } from "@rbxts/jecs";
 
-export default function loadCommands(world: World) {
-    
+import { useMemo } from "shared/utils/jecs/plugins/hooks/use-memo";
+
+export default function LoadCommands(world: World) {
+	useMemo(() => {}, []);
 }

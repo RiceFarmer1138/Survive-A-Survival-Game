@@ -18,11 +18,17 @@ interface EventStorage<T extends Array<unknown>> {
 function connect<T extends Array<unknown>>(event: EventLike<T>, callback: Callback<T>): ConnectionLike {
 	if (typeIs(event, "function")) {
 		return event(callback);
-	} else if (typeIs(event, "RBXScriptSignal") || "Connect" in event) {
+	}
+
+	if (typeIs(event, "RBXScriptSignal") || "Connect" in event) {
 		return event.Connect(callback);
-	} else if ("connect" in event) {
+	}
+
+	if ("connect" in event) {
 		return event.connect(callback);
-	} else if ("on" in event) {
+	}
+
+	if ("on" in event) {
 		return event.on(callback);
 	}
 

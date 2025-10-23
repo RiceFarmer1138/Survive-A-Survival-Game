@@ -3,7 +3,7 @@ import type { ILogEventSink, LogEvent } from "@rbxts/log/out/Core";
 import { MessageTemplateParser, PlainTextMessageTemplateRenderer } from "@rbxts/message-templates";
 import { RunService } from "@rbxts/services";
 
-export const LOG_LEVEL: LogLevel =LogLevel.Debugging 
+export const LOG_LEVEL: LogLevel = LogLevel.Debugging;
 
 const ENVIRONMENT = RunService.IsClient() ? "Client" : "Server";
 
@@ -16,9 +16,7 @@ const STACK_TRACE_LEVEL_FLAMEWORK = 4;
  */
 class LogEventOutputSink implements ILogEventSink {
 	public Emit(message: LogEvent): void {
-		const template = new PlainTextMessageTemplateRenderer(
-			MessageTemplateParser.GetTokens(message.Template),
-		);
+		const template = new PlainTextMessageTemplateRenderer(MessageTemplateParser.GetTokens(message.Template));
 
 		const tag = this.getLogLevelString(message.Level);
 		const context = message.SourceContext ?? "Game";
@@ -75,10 +73,5 @@ class LogEventOutputSink implements ILogEventSink {
 
 /** Sets up the logger for the application, for both the client and server. */
 export function setupLogger(): void {
-	Log.SetLogger(
-		Logger.configure()
-			.SetMinLogLevel(LOG_LEVEL)
-			.WriteTo(new LogEventOutputSink())
-			.Create(),
-	);
+	Log.SetLogger(Logger.configure().SetMinLogLevel(LOG_LEVEL).WriteTo(new LogEventOutputSink()).Create());
 }

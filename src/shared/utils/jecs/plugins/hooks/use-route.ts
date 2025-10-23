@@ -1,10 +1,9 @@
-import { useHookState } from "../topo";
-import { defineCleanupCallback } from "@rbxts/hot-reloader";
 import { Janitor } from "@rbxts/janitor";
+
+import { routes } from "shared/network";
+
 import { hotReloader } from "../../components";
-import { ByteNetType, packet, routes } from "shared/network";
 import { getInstanceByName } from "../../start";
-import { useChange } from "./use-change";
 import { useEffect } from "./use-effect";
 
 const sth: keyof typeof routes = "Body";
@@ -15,25 +14,30 @@ export function useRoute<T extends keyof typeof routes>(route: T, callback: List
 	useEffect(
 		() => {
 			const trash = new Janitor();
-			const systemMod = getInstanceByName(debug.info(callback, "s")[0]) as ModuleScript;
+			const systemModule = getInstanceByName(debug.info(callback, "s")[0]) as ModuleScript;
 
 			const callbackCast = callback as unknown as (data: unknown, player?: Player) => void;
 			trash.Add(
-				(routes[route] as { listen: (cb: ListenCallback<T>) => unknown }).listen(
+				(routes[route] as { listen: (callback_: ListenCallback<T>) => unknown }).listen(
 					callbackCast,
-				) as unknown as Callback,
+				) as Callback,
 			);
 
-			if (systemMod)
+			if (systemModule) {
 				trash.Add(
 					hotReloader.listen(
-						systemMod,
+						systemModule,
 						() => {},
-						() => trash?.Destroy?.(),
+						() => {
+							trash?.Destroy?.();
+						},
 					),
 				);
+			}
 
-			return () => trash?.Destroy?.();
+			return () => {
+				trash?.Destroy?.();
+			};
 		},
 		[],
 		route,

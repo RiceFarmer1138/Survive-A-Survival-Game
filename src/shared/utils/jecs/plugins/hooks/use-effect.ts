@@ -2,13 +2,13 @@ import { useHookState } from "../topo";
 import { useChange } from "./use-change";
 
 interface Storage {
-	dependencies?: unknown[];
 	cleanup?: () => boolean;
+	dependencies?: Array<unknown>;
 }
 
 export function useEffect(
-	effect: (() => void) | (() => () => boolean),
-	dependencies: unknown[],
+	effect: (() => () => boolean) | (() => void),
+	dependencies: Array<unknown>,
 	discriminator: unknown,
 ): void {
 	const storage = useHookState<Storage>(discriminator, (state) => {

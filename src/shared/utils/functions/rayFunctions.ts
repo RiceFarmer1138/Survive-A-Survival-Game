@@ -1,11 +1,11 @@
 import paths from "shared/paths";
 
-export function rayParamsFilter(included: Instance[], filter: Enum.RaycastFilterType) {
-	const rayParams = new RaycastParams();
-	rayParams.FilterType = filter;
-	rayParams.FilterDescendantsInstances = included;
+export function rayParamsFilter(included: Array<Instance>, filter: Enum.RaycastFilterType) {
+	const rayParameters = new RaycastParams();
+	rayParameters.FilterType = filter;
+	rayParameters.FilterDescendantsInstances = included;
 
-	return rayParams;
+	return rayParameters;
 }
 
 export const RayParams = {

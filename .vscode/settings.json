@@ -21,8 +21,7 @@
 		"**package-lock.json": true,
 		"**package.json": true,
 		"**README.md": true,
-		"**include": true,
-		"**node_modules": true,
+		"**include": true
 	},
 	"eslint.run": "onType",
 	"eslint.format.enable": true

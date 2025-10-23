@@ -1,4 +1,4 @@
-import { SystemFn } from "@rbxts/planck/out/types";
+import type { SystemFn } from "@rbxts/planck/out/types";
 
 type Cleanup<T> = (state: T) => boolean;
 
@@ -13,9 +13,9 @@ interface HookContext {
 }
 
 export interface FrameState {
-	currentSystem?: SystemFn<unknown[]>;
-	deltaTime: number;
 	[key: string]: unknown;
+	currentSystem?: SystemFn<Array<unknown>>;
+	deltaTime: number;
 }
 
 const stack: Array<HookContext> = [];
@@ -71,8 +71,8 @@ export function useCurrentFrame(): FrameState {
  */
 export function useHookState<T>(discriminator: unknown, cleanup?: Cleanup<T>): T {
 	const [file, line] = debug.info(3, "sl");
-	const [fn] = debug.info(2, "f");
-	const key = `${tostring(fn)}:${file}:${line}`;
+	const [func] = debug.info(2, "f");
+	const key = `${tostring(func)}:${file}:${line}`;
 
 	discriminator ??= key;
 

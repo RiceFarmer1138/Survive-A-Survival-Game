@@ -1,4 +1,5 @@
 type GameMap = Folder & {
-    Ores: Folder & {}
-    Box: BasePart
+	Box: BasePart;
+	Ores: Folder & {};
+	Trees: Folder & {};
 };

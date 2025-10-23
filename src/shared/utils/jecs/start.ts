@@ -1,10 +1,12 @@
 import jabby from "@rbxts/jabby";
-import { SystemFn, SystemTable } from "@rbxts/planck/out/types";
-import { ContextActionService, Players, RunService } from "@rbxts/services";
-import { Entity, World } from "@rbxts/jecs";
+import type { Entity, World } from "@rbxts/jecs";
 import PlankJabbyPlugin from "@rbxts/planck-jabby";
-import { hotReloader, ModelDebugger, systemQueue, world } from "./components";
+import type { SystemFn, SystemTable } from "@rbxts/planck/out/types";
+import { ContextActionService, Players, RunService } from "@rbxts/services";
+
 import { routes } from "shared/network";
+
+import { hotReloader, ModelDebugger, systemQueue, world } from "./components";
 import { PlanckHooksPlugin } from "./plugins";
 import { setupLogger } from "./setupLogger";
 
@@ -17,7 +19,7 @@ export function getInstanceByName(fullName: string): Instance | undefined {
 
 	for (const partName of pathParts) {
 		if (currentInstance) {
-			const child = currentInstance.FindFirstChild(partName) as Instance;
+			const child = currentInstance.FindFirstChild(partName) as Instance
 
 			if (child) {
 				currentInstance = child;
@@ -34,15 +36,15 @@ function transformPath(inputPath: string): string {
 	const endIndexOfP1 = inputPath.size();
 	const newString = inputPath.sub(startIndex, endIndexOfP1);
 
-	return "StarterPlayer.StarterPlayerScripts" + newString;
+	return `StarterPlayer.StarterPlayerScripts${newString}`;
 }
 
 function hotReload(systems: Array<SystemTable<[World]>>) {
-	systems.forEach((systemStruct) => {
-		const systemMod = getInstanceByName(debug.info(systemStruct.system, "s")[0]);
+	for (const systemStruct of systems) {
+		const systemModule = getInstanceByName(debug.info(systemStruct.system, "s")[0]);
 		// if system mod descendant of players
-		if (systemMod) {
-			if (systemMod.IsDescendantOf(Players)) {
+		if (systemModule) {
+			if (systemModule.IsDescendantOf(Players)) {
 				let systemToRemove: SystemFn<[World]> | SystemTable<[World]>;
 				const scriptToWatch = getInstanceByName(transformPath(debug.info(systemStruct.system, "s")[0]));
 				let oldSystem: Instance;
@@ -50,10 +52,13 @@ function hotReload(systems: Array<SystemTable<[World]>>) {
 				// for reloading the system
 				hotReloader.listen(
 					scriptToWatch as ModuleScript,
-					(newSystemMod) => {
-						if (!newSystemMod.IsA("ModuleScript")) return;
+					(newSystemModule) => {
+						if (!newSystemModule.IsA("ModuleScript")) {
+							return;
+						}
+
 						const theSystem = (
-							require(newSystemMod) as { default: SystemFn<[World]> | SystemTable<[World]> }
+							require(newSystemModule) as { default: SystemFn<[World]> | SystemTable<[World]> }
 						).default;
 						const toInput = !typeIs(theSystem, "function")
 							? theSystem
@@ -65,15 +70,20 @@ function hotReload(systems: Array<SystemTable<[World]>>) {
 						// adds the system
 						systemQueue.addSystem(toInput);
 						systemToRemove = toInput;
-						if (oldSystem) routes.getReplicatedComponents.send();
-						// systemQueue.addSystem(systemStruct.system, systemStruct.phase || Phase.Update)
+						if (oldSystem) {
+							routes.getReplicatedComponents.send();
+						}
+						// systemQueue.addSystem(systemStruct.system,
+						// systemStruct.phase || Phase.Update)
 					},
-					(oldSystemMod) => {
-						if (!oldSystemMod.IsA("ModuleScript")) return;
+					(oldSystemModule) => {
+						if (!oldSystemModule.IsA("ModuleScript")) {
+							return;
+						}
 
 						// removes the system
 						systemQueue.removeSystem(systemToRemove);
-						oldSystem = oldSystemMod;
+						oldSystem = oldSystemModule;
 					},
 				);
 			} else {
@@ -81,11 +91,14 @@ function hotReload(systems: Array<SystemTable<[World]>>) {
 
 				// for reloading the system
 				hotReloader.listen(
-					systemMod as ModuleScript,
-					(newSystemMod) => {
-						if (!newSystemMod.IsA("ModuleScript")) return;
+					systemModule as ModuleScript,
+					(newSystemModule) => {
+						if (!newSystemModule.IsA("ModuleScript")) {
+							return;
+						}
+
 						const theSystem = (
-							require(newSystemMod) as { default: SystemFn<[World]> | SystemTable<[World]> }
+							require(newSystemModule) as { default: SystemFn<[World]> | SystemTable<[World]> }
 						).default;
 						const toInput = !typeIs(theSystem, "function")
 							? theSystem
@@ -98,33 +111,35 @@ function hotReload(systems: Array<SystemTable<[World]>>) {
 						systemQueue.addSystem(toInput);
 						systemToRemove = toInput;
 					},
-					(oldSystemMod) => {
-						if (!oldSystemMod.IsA("ModuleScript")) return;
+					(oldSystemModule) => {
+						if (!oldSystemModule.IsA("ModuleScript")) {
+							return;
+						}
 
 						systemQueue.removeSystem(systemToRemove);
 					},
 				);
 			}
 		}
-	});
+	}
 }
 
 export function start(systems: Array<SystemTable<[World]>>) {
 	jabby.register({
-		name: "World " + (IS_SERVER_CONTEXT ? "Server" : "Client"),
 		applet: jabby.applets.world,
 		configuration: {
-			world,
 			get_entity_from_part: (part) => {
 				for (const [entity, model] of world.query(ModelDebugger)) {
 					if (part.IsDescendantOf(model) || part === model) {
-						return [entity, (model.IsA("Model") && model.PrimaryPart) || part] as LuaTuple<[Entity, Part]>
+						return [entity, (model.IsA("Model") && model.PrimaryPart) || part] as LuaTuple<[Entity, Part]>;
 					}
 				}
 
-				return [undefined, part] as unknown as LuaTuple<[Entity, Part]>
+				return [undefined, part] as unknown as LuaTuple<[Entity, Part]>;
 			},
+			world,
 		},
+		name: `World ${IS_SERVER_CONTEXT ? "Server" : "Client"}`,
 	});
 
 	jabby.set_check_function((player) => {
@@ -134,7 +149,7 @@ export function start(systems: Array<SystemTable<[World]>>) {
 
 	systemQueue.addPlugin(new PlankJabbyPlugin()).addPlugin(new PlanckHooksPlugin());
 	hotReload(systems);
-	setupLogger()
+	setupLogger();
 
 	if (IS_SERVER_CONTEXT) {
 		jabby.broadcast_server();
@@ -144,7 +159,10 @@ export function start(systems: Array<SystemTable<[World]>>) {
 		ContextActionService.BindAction(
 			"Open Jabby Home",
 			(actionName: string, state: Enum.UserInputState) => {
-				if (state !== Enum.UserInputState.Begin) return;
+				if (state !== Enum.UserInputState.Begin) {
+					return;
+				}
+
 				jabby_client.spawn_app(jabby_client.apps.home);
 			},
 			false,
