@@ -7,6 +7,7 @@ import * as c from "shared/utils/jecs/components";
 import type { componentsToReplicate } from "shared/utils/jecs/components";
 import {
 	ReplicatedComponent,
+	TakeFromThirst,
 	TargetReplication,
 	UpdateData,
 	UpdateInventory,
@@ -63,6 +64,13 @@ export const setEntity = {
 
 		// sets tje targets in thje target replication
 		world.set(targetEntity, TargetReplication, { ...targetReplication, [component]: oldTargets });
+	},
+
+	takeFromThirstBar: (bodyEntity: Entity, data: { amount: number } | { percentile: number }) => {
+		addComponent(world.entity(), TakeFromThirst, {
+			bodyEntity,
+			...data,
+		});
 	},
 };
 

@@ -17,6 +17,7 @@
 		"**.prettierrc": true,
 		"**.eslintrc": true,
 		"**tsconfig.json": true,
+		"**eslint.config.mjs": true,
 		"**default.project.json": true,
 		"**package-lock.json": true,
 		"**package.json": true,

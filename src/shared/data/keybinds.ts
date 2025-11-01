@@ -2,11 +2,10 @@ import { RunService } from "@rbxts/services";
 import { Actions, InputState } from "@rbxts/spark";
 
 export const inputState = new InputState();
-export const actions = new Actions(["place-part", "rotate-part"]);
+export const actions = new Actions(["sprint"]);
 
 actions.setRebuildBindings((bindings) => {
-	bindings.bind("place-part", Enum.UserInputType.MouseButton1, Enum.KeyCode.ButtonR1);
-	bindings.bind("rotate-part", Enum.KeyCode.R);
+	bindings.bind("sprint", Enum.KeyCode.LeftShift);
 });
 
 RunService.BindToRenderStep("Spark", Enum.RenderPriority.Input.Value, () => {

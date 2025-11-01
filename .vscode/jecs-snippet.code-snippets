@@ -1,0 +1,12 @@
+{
+	"JECS System": {
+		"prefix": ["JecsSystem"],
+		"description": "Create a jecs system",
+		"body": [
+			"import type { World } from \"@rbxts/jecs\";",
+			"",
+			"export default function System(world: World): void {",
+			"}",
+		],
+	},
+}

@@ -23,6 +23,25 @@ type MapTableToByteNet<T> = T extends Instance
 
 export const packets = defineNamespace("Packets", () => {
 	return {
+		sprint: definePacket({
+			reliabilityType: "reliable",
+			value: ByteNet.bool
+		}),
+
+		updateInventory: definePacket({
+			reliabilityType: "reliable",
+			value: ByteNet.unknown as ByteNetType<Inventory>,
+		}),
+
+		updateStats: definePacket({
+			reliabilityType: "reliable",
+			value: struct({
+				statAmount: ByteNet.int8,
+				statMaxAmount: ByteNet.int8,
+				statType: ByteNet.string as ByteNetType<"hunger" | "thirst">,
+			}),
+		}),
+
 		deleteReplicatedEntity: definePacket({
 			reliabilityType: "reliable",
 			value: ByteNet.unknown as ByteNetType<Entity>,
@@ -32,11 +51,6 @@ export const packets = defineNamespace("Packets", () => {
 		getReplicatedComponents: definePacket({
 			reliabilityType: "reliable",
 			value: ByteNet.nothing,
-		}),
-
-		updateInventory: definePacket({
-			reliabilityType: "reliable",
-			value: ByteNet.unknown as ByteNetType<Inventory>,
 		}),
 
 		...({

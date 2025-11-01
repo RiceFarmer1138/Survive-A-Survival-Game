@@ -1,5 +1,5 @@
 type Assets = Folder & {
-	Ores: Folder & {
+	Ore: Folder & {
 		GoldOre: Model & {};
 		IronOre: Model & {};
 	};

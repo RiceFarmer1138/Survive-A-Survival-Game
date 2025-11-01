@@ -11,6 +11,7 @@ export default class OreBuilder {
 	private readonly model: Model | undefined;
 	private readonly world: World;
 
+	private parent: Instance = paths.Map.Ore;
 	private _name: Ore = "GoldOre";
 	private _position: Vector3 = new Vector3(math.huge, math.huge, math.huge);
 	private _tweenable = false;
@@ -31,10 +32,16 @@ export default class OreBuilder {
 		return this;
 	}
 
+	public Parent(ore_parent: Instance): this {
+		this.parent = ore_parent
+		return this
+	}
+
 	public Build(): OreState {
-		const oreModel = paths.Assets.Ores[this._name].Clone();
+		const oreModel = paths.Assets.Ore[this._name as "GoldOre"].Clone();
 		oreModel.PivotTo(new CFrame(this._position));
-		oreModel.Parent = paths.Map.Ores;
+		oreModel.Parent = this.parent
+		
 		return new OreState(this._entity, oreModel);
 	}
 }

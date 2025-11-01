@@ -15,6 +15,7 @@ type ValueFromReadonly<T> = T extends Readonly<infer U> ? U : never;
 type GameUI = Assets["UI"]["GameUI"];
 type Ore = keyof Omit<Assets["Ores"], keyof Folder>;
 
+
 type Inventory = Array<InventoryItem>;
 interface InventoryItem {
 	Amount: number;

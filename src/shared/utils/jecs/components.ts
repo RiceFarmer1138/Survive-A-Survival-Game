@@ -64,7 +64,7 @@ export function Removed<T>(comp: Entity<T>): Pair<undefined, T> {
 	return pair<undefined, T>(removedComponent as unknown as Entity<undefined>, comp as unknown as Entity<T>);
 }
 
-/** Player. */
+/** ********************** Player related components. */
 // hunger for player
 export const HungerBar = component<{
 	hunger: number;
@@ -78,12 +78,26 @@ export const HungerBar = component<{
 // fflag for when the player runs out of hunger
 export const Starved = component("Starved");
 
+// thrist for sprinting / any kind of movement related
+export const ThirstBar = component<{
+	maxThirst: number;
+	thirst: number;
+	/**
+	 * How long it takes to replenish player's thirst bar
+	 * The higher the rate, the faster it fills up
+	 */
+	thirstRate: number;
+}>("ThirstBar");
+export const TakeFromThirst = component<{ bodyEntity: Entity, percentile: number } | { bodyEntity: Entity, amount: number }>("TakeFromThirst");
+
 // player inventory
 export const UpdateInventory = component<{
 	bodyEntity: Entity;
 	/** The function that returns the updated player inventory. */
 	updateFunction: (oldInventory: Inventory) => Inventory;
 }>("UpdateInventory");
+
+export const WalkSpeed = component<{ walkSpeed: number }>("WalkSpeed")
 
 // player data comp
 export const Data = component<PlayerData>("Data");
