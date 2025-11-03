@@ -28,6 +28,10 @@ export const packets = defineNamespace("Packets", () => {
 			value: ByteNet.bool
 		}),
 
+		updateItems: definePacket({
+			
+		})
+
 		updateInventory: definePacket({
 			reliabilityType: "reliable",
 			value: ByteNet.unknown as ByteNetType<Inventory>,
@@ -36,8 +40,8 @@ export const packets = defineNamespace("Packets", () => {
 		updateStats: definePacket({
 			reliabilityType: "reliable",
 			value: struct({
-				statAmount: ByteNet.int8,
-				statMaxAmount: ByteNet.int8,
+				statAmount: ByteNet.int16,
+				statMaxAmount: ByteNet.int16,
 				statType: ByteNet.string as ByteNetType<"hunger" | "thirst">,
 			}),
 		}),

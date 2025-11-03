@@ -17,30 +17,28 @@ import {
 // querying over players that don't have a hunger bar after their character and
 // data have loaded
 const playersWithoutHunger = world.query(Player).with(Body, Data).without(HungerBar).cached();
-const hungerBarChanged = world.query(TargetEntity, Changed(HungerBar)).cached();
 const hungerQuery = world.query(HungerBar).cached();
 
 /** `updateHunger` A system for updating and replenishing players' hunger. */
 export default function UpdateHunger(world: World): void {
 	const deltaTime = systemQueue.getDeltaTime();
 
-	for (const [_, hungerEntity, hungerBar] of hungerBarChanged) {
-		if (!world.contains(hungerEntity)) {
-			continue;
+	for (const [_, hungerEntity, hungerBar] of world.query(TargetEntity, Changed(HungerBar))) {
+			if (!world.contains(hungerEntity)) {
+				continue;
+			}
+	
+			const player = world.get(hungerEntity, Player);
+			const { maxHunger, hunger } = hungerBar.new ?? { maxHunger: 100, hunger: 100 };
+			if (player) {
+				routes.updateStats.sendTo({ statAmount: hunger, statMaxAmount: maxHunger, statType: "hunger" }, player);
+			}
 		}
-
-		const player = world.get(hungerEntity, Player);
-		const { hunger, maxHunger } = hungerBar.new ?? { hunger: 175, hungerRate: 0.6, maxHunger: 175 };
-		if (player) {
-			routes.updateStats.sendTo({ statAmount: hunger, statMaxAmount: maxHunger, statType: "hunger" }, player);
-		}
-	}
 
 	// replenishing the hunger by time
 	for (const [hungerEntity, hungerBar] of hungerQuery) {
-		const { hunger, hungerRate, maxHunger } = hungerBar;
-		let currentHunger = math.max(hunger - hungerRate * deltaTime, 0);
-		currentHunger = math.clamp(currentHunger, 0, maxHunger);
+		const { hunger, hungerRate } = hungerBar;
+		const currentHunger = math.max(hunger - hungerRate * deltaTime, 0);
 
 		// marks the entity dead once their hunger drops to 0
 		if (currentHunger === 0) {

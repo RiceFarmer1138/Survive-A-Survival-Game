@@ -1,4 +1,5 @@
-import { Lighting } from "@rbxts/services";
+import { Lighting, Players } from "@rbxts/services";
+import { routes } from "shared/network";
 
 import { addComponent } from "shared/utils/functions/jecsHelpFunctions";
 import { Day, world } from "shared/utils/jecs/components";
@@ -6,7 +7,6 @@ import { Day, world } from "shared/utils/jecs/components";
 const MAX_CYCLE_DAY = 50;
 const CYCLE_DURATION = 6 * 30;
 const CYCLE_START = os.clock();
-const CYCLE_ENTITY = world.entity();
 
 export default function UpdateDayNight(): void {
 	const elapsedTime = os.clock() - CYCLE_START;
@@ -18,5 +18,9 @@ export default function UpdateDayNight(): void {
 	const indicator = hour >= 12 ? "PM" : "AM";
 
 	Lighting.ClockTime = 12 + hour + minutes / 60;
-	addComponent(CYCLE_ENTITY, Day, { day, indicator });
+	const dayC = world.get(Day, Day)
+	if (dayC && dayC.day !== day) {
+		print(day)
+		addComponent(Day, Day, { day, indicator })
+	}
 }

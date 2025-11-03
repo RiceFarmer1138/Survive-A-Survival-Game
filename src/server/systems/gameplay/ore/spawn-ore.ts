@@ -23,9 +23,7 @@ function UpdateOres(oreFolder: Folder): void {
 	const result = Tracer.ray(new Vector3(rand_x, boxPosition.Y, rand_z), Vector3.yAxis.mul(-1), 100)
 		.useRaycastParams(rayParamsFilter([paths.Map], Enum.RaycastFilterType.Exclude))
 		.run();
-	warn(result);
 
-	print(result.position)
 	const ore = worldBuilder.Ore().Class("GoldOre").Position(result.position).Parent(oreFolder).Build();
 	addComponent(ore.GetEntity(), ModelDebugger, ore.GetModel());
 	addComponent(ore.GetEntity(), Ore, {
@@ -41,7 +39,5 @@ export default function SpawnOre(): void {
 				UpdateOres(oreContainer as Folder);
 			});
 		}
-
-		Log.Info("Spawning Ore");
 	}, [useThrottle(25)]);
 }

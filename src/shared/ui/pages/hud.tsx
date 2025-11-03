@@ -4,48 +4,42 @@ import Vide, { read, source } from "@rbxts/vide";
 
 import { routes } from "shared/network";
 
-import { Bar } from "../components/bar";
-import { BarContainer } from "../components/bar-container";
-import { springs } from "../constants";
+import { Sprint } from "../components/sprint";
+import { SprintContainer } from "../components/sprint-container";
+import { positions, springs, worldContext } from "../constants";
 import { useCharacter } from "../hooks/use-character";
+import { Hunger } from "../components/hunger";
+import jecs_vide, { useEntityGet, useQuery, useQueryFirst } from "@rbxts/jecs-vide";
+import { Container } from "../components/primitive/container";
+import { DayText } from "../components/day-text";
+import { Day } from "shared/utils/jecs/components";
+import { Id, Query } from "@rbxts/jecs";
+import { usePx } from "../hooks/use-px";
 
 export default function Hud(): Vide.Node {
-	const character = useCharacter(Players.LocalPlayer);
-	const sprintAttach: () => BasePart = () => read(character).FindFirstChild("HumanoidRootPart") as BasePart;
-	const thirstShow = source(false);
-	const [thirstBarSize, setThirstBarSize] = useMotion(1);
+	const px = usePx()
+	const [thirstProgress, setThirstProgress] = useMotion(1)
+	const [hungerProgress, setHungerProgress] = useMotion(1)
 
 	routes.updateStats.listen(({ statAmount, statMaxAmount, statType }) => {
-		if (statType === "thirst") {
-			setThirstBarSize.spring(statAmount / statMaxAmount, springs.gentle);
-		}
-	});
+			if (statType === "thirst") {
+				setThirstProgress.spring(statAmount / statMaxAmount, springs.gentle);
+			} else if (statType === "hunger") {
+				setHungerProgress.spring(statAmount/  statMaxAmount, springs.responsive)
+			}
+		});
 
-	useEventListener(UserInputService.InputBegan, (inputObject, gps) => {
-		if (gps) {
-			return;
-		}
-
-		if (inputObject.KeyCode === Enum.KeyCode.LeftShift) {
-			thirstShow(true);
-		}
-	});
-
-	useEventListener(UserInputService.InputEnded, (inputObject, gps) => {
-		if (gps) {
-			return;
-		}
-
-		if (inputObject.KeyCode === Enum.KeyCode.LeftShift) {
-			thirstShow(false);
-		}
-	});
 
 	return (
 		<>
-			<BarContainer adornee={sprintAttach}>
-				<Bar shown={thirstShow} adornee={sprintAttach} size={() => UDim2.fromScale(1, read(thirstBarSize))} />
-			</BarContainer>
+			<Sprint progress={thirstProgress}/>
+			<Hunger progress={hungerProgress} />
+
+			<Container
+				size={UDim2.fromScale(1, 1)}
+			>
+				<DayText text={() => `Day 1`} position={() => positions.topCenter.add(UDim2.fromOffset(0, px(50)))} textSize={() => px(45)} />
+			</Container>
 		</>
 	);
 }

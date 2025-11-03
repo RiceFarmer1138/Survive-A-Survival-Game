@@ -1,12 +1,12 @@
 import Vide, { type Derivable, type PropsWithChildren } from "@rbxts/vide";
 
-interface BarContainerProps {
+interface SprintContainerProps {
 	readonly adornee: Derivable<BasePart>;
 	readonly offset?: Derivable<Vector3>;
 	readonly visible?: Derivable<boolean>;
 }
 
-export function BarContainer({ adornee, children, offset, visible }: PropsWithChildren<BarContainerProps>): Vide.Node {
+export function SprintContainer({ adornee, children, offset, visible }: PropsWithChildren<SprintContainerProps>): Vide.Node {
 	return (
 		<billboardgui
 			Name="SprintContainer"

@@ -128,7 +128,7 @@ export const Day = component<{
 	/** Days indicator. */
 	day: number;
 	indicator: "AM" | "PM";
-}>("Day");
+}>("Day", { day: 0, indicator: "AM" });
 
 // ore component
 export const Ore = component<{

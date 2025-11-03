@@ -1,4 +1,4 @@
-import { useQuery } from "@rbxts/jecs-vide";
+import jecs_vide, { useQuery } from "@rbxts/jecs-vide";
 import { Players } from "@rbxts/services";
 import Vide from "@rbxts/vide";
 
@@ -12,6 +12,8 @@ import change from "shared/utils/jecs/systems/change";
 import { LocalUI } from "./constants";
 import Sprint from "./systems/movement/sprint";
 import receiveReplication from "./systems/receive-replication";
+import { world } from "shared/utils/jecs/components";
+import { worldContext } from "shared/ui/constants";
 
 if (!game.IsLoaded()) {
 	game.Loaded.Wait();
@@ -32,7 +34,7 @@ Vide.mount(() => {
 						return <MainMenu />;
 					}}
 				</OnlyInPlace>
-				<Hud />
+				<Hud/>
 			</screengui>
 		</>
 	);
